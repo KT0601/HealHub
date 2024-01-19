@@ -5,13 +5,13 @@ import transporter from '../config/emailConfig.js'
 
 class UserController {
   static userRegistration = async (req, res) => {
-    const { name, email, password, password_confirmation, tc } = req.body
+    const { name, email, password, gender,Aadhar_No,Mobile_No,Address,Age } = req.body
     const user = await UserModel.findOne({ email: email })
     if (user) {
       res.send({ "status": "failed", "message": "Email already exists" })
     } else {
-      if (name && email && password && password_confirmation && tc) {
-        if (password === password_confirmation) {
+      if (name && email && password  ) {
+        
           try {
             const salt = await bcrypt.genSalt(10)
             const hashPassword = await bcrypt.hash(password, salt)
@@ -19,7 +19,11 @@ class UserController {
               name: name,
               email: email,
               password: hashPassword,
-              tc: tc
+              gender:gender,
+              Aadhar_No:Aadhar_No,
+              Mobile_No:Mobile_No,
+              Address:Address,
+              Age:Age
             })
             await doc.save()
             const saved_user = await UserModel.findOne({ email: email })
@@ -30,9 +34,7 @@ class UserController {
             console.log(error)
             res.send({ "status": "failed", "message": "Unable to Register" })
           }
-        } else {
-          res.send({ "status": "failed", "message": "Password and Confirm Password doesn't match" })
-        }
+         
       } else {
         res.send({ "status": "failed", "message": "All fields are required" })
       }
